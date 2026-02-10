@@ -1,3 +1,5 @@
+// DYNAMIC ROUTING
+
 import { NextResponse } from "next/server";
 
 import { users } from "../route";

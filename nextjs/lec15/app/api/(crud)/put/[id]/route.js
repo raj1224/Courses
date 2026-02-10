@@ -1,3 +1,5 @@
+// put uses when u want to update entire data.
+
 import { NextResponse } from "next/server";
 import { users } from "../../(crud)/get/route";
 

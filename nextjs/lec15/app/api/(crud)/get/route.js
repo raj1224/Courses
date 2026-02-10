@@ -30,12 +30,17 @@ export const users=[
 export async function GET(request) {
     try {
         // query parameters
+        // uses:-
+        // .filtering
+        // .searching
+        // .pagination
         const searchParams= request.nextUrl.searchParams;
         const name= searchParams.get("name")// single value;
         const age= searchParams.get("age")// single value;
-
-        let filteredUsers=users
         // console.log(name,age)
+
+        // Filteration
+        let filteredUsers=users
         if(age){
             filteredUsers=filteredUsers.filter((user)=>user.age===Number(age))
         }

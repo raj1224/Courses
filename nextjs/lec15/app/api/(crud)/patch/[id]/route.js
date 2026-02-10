@@ -1,3 +1,5 @@
+// patch uses when u want to update specific part of data.
+
 import { NextResponse } from "next/server";
 import { users } from "../../get/route";
 

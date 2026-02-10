@@ -29,6 +29,7 @@ export async function POST(request){
             name,
             email
         };
+        
         users.push(newUser);
         return NextResponse.json({
             success:true,

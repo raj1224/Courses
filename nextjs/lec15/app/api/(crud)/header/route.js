@@ -1,3 +1,8 @@
+// Headers: Metadata sent with every http request/response
+// 2 types of headers:-
+// 1. request headers
+// 2. response headers
+
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -6,12 +11,13 @@ export async function GET(request) {
     // access request headers
     // const requestHeaders=new Headers(request.headers);
     // const authHeader=requestHeaders.get("Authorization");
+    // console.log("auth header",authHeader)
 
     // 2nd. method
     const headerList= await headers()
     const authHeader=headerList.get('Authorization')
 
-    // 
+
     console.log("Auth Header:", authHeader);
     // return NextResponse.json({
     //     success:true,

@@ -1,3 +1,6 @@
+// Cookies:- small piece of data stored in the browser and automatically sent back with every request
+//  to the same server
+
 import {cookies} from 'next/headers';
 import { NextResponse } from 'next/server';
 
