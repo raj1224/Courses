@@ -8,6 +8,10 @@ const NotesClient = ({initialNotes}) => {
     const [title,setTitle]=useState("")
     const [content,setContent]=useState("")
     const [loading,setLoading]=useState(false)
+
+    const[editingId,setEditingId]=useState(null)
+    const[editTitle,setEditTitle]=useState("")
+    const[editContent,setEditContent]=useState("")
     
     const createNote=async(e)=>{
         e.preventDefault();
@@ -33,6 +37,31 @@ const NotesClient = ({initialNotes}) => {
             toast.error('something went wrong')
         }
     }
+    const updateNote=async(id)=>{
+
+        if(!editTitle.trim() || !editContent.trim()) return;
+        setLoading(true)
+        try {
+            const response = await fetch(`/api/notes/${id}`,{
+                method:"PUT",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({title:editTitle,content:editContent})
+            })
+            const result= await response.json()
+            // console.log(result)
+            if(result.success){
+                toast.success("Notes updated successfully")
+                setNotes(notes.map((note)=>(note._id===id ? result.data :note)))
+                setEditingId(null)
+                setEditTitle("")
+                setEditContent("")
+            }
+            setLoading(false)
+        } catch (error) {
+            console.error("error updating note:",error)
+            toast.error('something went wrong')
+        }
+    }
 
     const deleteNote=async(id)=>{
         try {
@@ -48,6 +77,18 @@ const NotesClient = ({initialNotes}) => {
             console.error("Error deleting note:",error)
             toast.error("something went wrong")
         }
+    }
+
+    const startEdit=(note)=>{
+        setEditingId(note._id);
+        setEditTitle(note.title);
+        setEditContent(note.content);
+    }
+    
+    const cancelEdit=()=>{
+        setEditingId(null);
+        setEditTitle("");
+        setEditContent("");
     }
     
   return (
@@ -87,10 +128,40 @@ const NotesClient = ({initialNotes}) => {
             ):(
                 notes.map((note)=>(
                     <div key={note._id} className='bg-white p-6 rounded-lg shadow-md'>
-                        <div className='flex justify-between items-start mb-2'>
+                        {
+                            editingId===note._id ?(<>
+                            <div className='space-y-4'>
+                                <input type="text"
+                placeholder='Note Title'
+                value={title}
+                onChange={(e)=>setTitle(e.target.value)}
+                className='w-full p-3 border bog border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 '
+                required
+                 />
+                <textarea 
+                placeholder='Note Content'
+                value={content}
+                onChange={(e)=>setContent(e.target.value)}
+                rows={4}
+                className='w-full p-3 border bog border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 '
+
+                />
+
+                <div className='flex gap-2'>
+                    <button onClick={()=>updateNote(note._id)} disabled={loading} className='bg-green text-white px-4 py-2 rounded-md hover:bg-green-600 disabled:opacity-500'>
+                        {loading ? "Saving...":"Save"}
+                    </button>
+                    <button onClick={cancelEdit}  className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-green-600 '>
+                        Cancel
+                    </button>
+                </div>
+
+                            </div>
+                            </>):(<>
+                            <div className='flex justify-between items-start mb-2'>
                             <h3 className='text-lg font-semibold'>{note.title}</h3>
                             <div className='flex gap-2'>
-                                <button className='text-green-500 hover:text-green-700 text-sm'>Edit</button>
+                                <button onClick={()=>startEdit(note)} className='text-green-500 hover:text-green-700 text-sm'>Edit</button>
                                 <button onClick={()=>deleteNote(note._id)} className='text-red-500 hover:text-red-700 text-sm'>Delete</button>
                             </div>
                         </div>
@@ -99,6 +170,9 @@ const NotesClient = ({initialNotes}) => {
                         {note.updatedAt !== note.createdAt &&(
                             <p className='text-sm text-gray-500'>Updated:{new Date(note.updatedAt).toLocaleDateString()}</p>
                         )}
+                            </>)
+                        }
+                        
                     </div>
                 ))
             )}

@@ -6,6 +6,7 @@ import React from 'react'
 async function getNotes() {
   await dbConnect();
   const notes= await Note.find({}).sort({createdAt:-1}).lean()
+  // what is the use of lean()?
 
   return notes.map((note)=>({
     ...note,
